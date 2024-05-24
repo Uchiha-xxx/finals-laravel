@@ -7,6 +7,7 @@
                 <li class="breadcrumb-item"><a href="{{ route('dashboard')}}">{{__('Dashboard')}}</a></li>
                 <li class="breadcrumb-item active">{{ __('Resource') }}</li>
                 <li class="breadcrumb-item active">{{ __('Post') }}</li>
+               
                 
             </ol>
         </nav>
@@ -35,12 +36,11 @@
                         });
                     </script>
                 @endif
-                <div class="card p-4">
+                <div class="card p-5">
                     <div class="card-body">
-                        <div class="text-end">
-                            <a href="{{ route('post.create') }}"  type="button" class="btn btn-primary" ><i class="bi bi-file-earmark-plus-fill me-1  "></i> Add a New Options</a> 
-                        </div>
-                        <hr class="my-5">
+                        <a href="{{ route('post.create') }}"  type="button" class="btn btn-primary float-end" ><i class="bi bi-file-earmark-plus-fill me-1  "></i> Add a New Options</a> 
+                        <a href="{{ route('dashboard') }}" type="button " class="btn btn-primary" ><i class="bi bi-reply-fill me-1  "></i> Back</a>
+                    <hr class="my-10">
                         <table class="table datatable">
                             <thead>
                                 <tr>
@@ -58,14 +58,49 @@
                                             <td>{{$post -> post}}</td>
                                             <td>{{ ($post -> status == 1 ? 'Published':'Unpublished') }}</td>
                                             <td>
-                                            <a href="{{ route('post.show', $post) }}" class="btn btn-dark m-1" fdprocessedid="sh46d8"><i class="bi bi-folder-symlink"></i></a>
-                                            <a href="{{ route('post.edit', $post) }}" type="button" class="btn btn-success m-1" fdprocessedid="sh46d8"><i class="bi bi-pencil-square"></i></a>
-                                                <!-- Confirmation Delete Modal -->
-                                            <form action="{{ route('post.destroy', $post->id) }}" method="post">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger m-1" fdprocessedid="sh46d8"><i class="bi bi-trash-fill"></i></button>
-                                            </form>
+                                                <a href="{{ route('post.show', $post) }}" class="btn btn-dark m-1" fdprocessedid="sh46d8"><i class="bi bi-folder-symlink"></i></a>
+                                                <a href="{{ route('post.edit', $post) }}" type="button" class="btn btn-success m-1" fdprocessedid="sh46d8"><i class="bi bi-pencil-square"></i></a>
+                                                <form id="delete-form-{{ $post->id }}" action="{{ route('post.destroy', $post->id) }}" method="post" style="display: inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-danger m-1" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-post-id="{{ $post->id }}"><i class="bi bi-trash-fill"></i></button>
+                                                </form>
+                                            <!-- Delete Confirmation Modal -->
+                                                <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                Are you sure you want to delete this post? This action cannot be undone.
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- JavaScript to Handle Modal and Form Submission -->
+                                                <script>
+                                                    document.addEventListener('DOMContentLoaded', function() {
+                                                        var confirmDeleteModal = document.getElementById('confirmDeleteModal');
+                                                        var confirmDeleteButton = document.getElementById('confirmDeleteButton');
+                                                        var formToSubmit;
+
+                                                        confirmDeleteModal.addEventListener('show.bs.modal', function (event) {
+                                                            var button = event.relatedTarget; // Button that triggered the modal
+                                                            var postId = button.getAttribute('data-post-id'); // Extract info from data-* attributes
+                                                            formToSubmit = document.getElementById('delete-form-' + postId); // Store the form to submit
+                                                        });
+
+                                                        confirmDeleteButton.addEventListener('click', function() {
+                                                            formToSubmit.submit(); // Submit the stored form when the delete button is clicked
+                                                        });
+                                                    });
+                                                </script>
                                             </td>                  
                                         </tr>
                                     @endforeach   
