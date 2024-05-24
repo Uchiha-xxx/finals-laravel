@@ -7,8 +7,6 @@
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">{{__('Dashboard')}}</a></li>
                 <li class="breadcrumb-item active">{{ __('Resource') }}</li>
                 <li class="breadcrumb-item"><a href="{{ route('post.index') }}">{{__('Post')}}</a></li>
-                <li class="breadcrumb-item active">{{ __('Subject') }}</li>
- 
             </ol>
         </nav>
     </div>
